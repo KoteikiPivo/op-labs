@@ -3,6 +3,7 @@ from classes import *
 
 
 class LibrarianCRUD:
+    """CRUD для библиотекарей"""
     def __init__(self):
         self.librarian_list: Librarian = []
         self.current_id = 1
@@ -22,7 +23,8 @@ class LibrarianCRUD:
                 return lib
         return None
     
-    def update(self, lib_id: int, name: str = None, phone: int = None, work_days: str = None):
+    def update(self, lib_id: int, name: str = None,
+               phone: int = None, work_days: str = None):
         lib = self.read_by_id(lib_id)
         if lib:
             if name is not None:
@@ -41,7 +43,8 @@ class LibrarianCRUD:
             return f"Librarian with id {lib_id} removed"
         return "Librarian not found"
 
-class MemberCRUD:
+class MemberCRUD():
+    """CRUD для членов библиотеки"""
     def __init__(self):
         self.member_list: Member = []
         self.current_id = 1
@@ -78,12 +81,14 @@ class MemberCRUD:
             return f"Member with id {memb_id} removed"
         return "Member not found"
 
-class AccountCRUD:
+class AccountCRUD():
+    """CRUD для аккаунтов электронной библиотеки"""
     def __init__(self):
         self.account_list: Account = []
         self.current_id = 1
 
-    def create(self, name: str, phone: int, login: str, passwd: str) -> Account:
+    def create(self, name: str, phone: int,
+               login: str, passwd: str) -> Account:
         acc = Account(name, phone, self.current_id, login, passwd)
         self.account_list.append(acc)
         self.current_id += 1
@@ -98,7 +103,8 @@ class AccountCRUD:
                 return acc
         return None
     
-    def update(self, acc_id: int, name: str, phone: int, login: str, passwd: str):
+    def update(self, acc_id: int, name: str, phone: int,
+               login: str, passwd: str):
         acc = self.read_by_id(acc_id)
         if acc:
             if name is not None:
@@ -119,7 +125,8 @@ class AccountCRUD:
             return f"Account with id {acc_id} removed"
         return "Account not found"
 
-class CustomerCRUD:
+class CustomerCRUD():
+    """CRUD для клиентов доставки"""
     def __init__(self):
         self.customer_list: Customer = []
 
@@ -137,7 +144,8 @@ class CustomerCRUD:
                 return cust
         return None
     
-    def update(self, address_search: str, name: str, phone: int, address: str):
+    def update(self, address_search: str, name: str, 
+               phone: int, address: str):
         cust = self.read_by_address(address_search)
         if cust:
             if name is not None:
@@ -156,7 +164,8 @@ class CustomerCRUD:
             return f"Customer with address {address_search} removed"
         return "Customer not found"
 
-class BookCRUD:
+class BookCRUD():
+    """CRUD для книг"""
     def __init__(self):
         self.book_list: Book = []
 
@@ -179,7 +188,7 @@ class BookCRUD:
         if book:
             if title is not None:
                 book.title = title
-            if phone is not None:
+            if author is not None:
                 book.author = author
             if year is not None:
                 book.year = year
@@ -193,7 +202,8 @@ class BookCRUD:
             return f"Book with title {title_search} removed"
         return "Book not found"
 
-class EBookCRUD:
+class EBookCRUD():
+    """CRUD для электронных книг"""
     def __init__(self):
         self.ebook_list: EBook = []
 
@@ -211,12 +221,13 @@ class EBookCRUD:
                 return ebook
         return None
     
-    def update(self, title_search: str, title: str, author: str, year: int, cost: int):
+    def update(self, title_search: str, title: str, 
+               author: str, year: int, cost: int):
         ebook = self.read_by_title(title_search)
         if ebook:
             if title is not None:
                 ebook.title = title
-            if phone is not None:
+            if author is not None:
                 ebook.author = author
             if year is not None:
                 ebook.year = year
@@ -228,11 +239,12 @@ class EBookCRUD:
     def delete(self, title_search: str):
         ebook = self.read_by_title(title_search)
         if ebook:
-            self.ebook_list.remove(book)
+            self.ebook_list.remove(ebook)
             return f"EBook with title {title_search} removed"
         return "EBook not found"
 
-class OrderCRUD:
+class OrderCRUD():
+    """CRUD для заказов"""
     def __init__(self):
         self.order_list: Order = []
         self.current_id = 1
@@ -245,14 +257,14 @@ class OrderCRUD:
     def read_all(self):
         return self.order_list
     
-    def read_by_id(self, id: int):
+    def read_by_id(self, ord_id: int):
         for ordr in self.order_list:
-            if ordr.id == id:
+            if ordr.id == ord_id:
                 return ordr
         return None
     
-    def update(self, id: int, book: Book, customer: Customer):
-        ordr = self.read_by_id(id)
+    def update(self, ord_id: int, book: Book, customer: Customer):
+        ordr = self.read_by_id(ord_id)
         if ordr:
             if book is not None:
                 ordr.book = book
@@ -261,14 +273,15 @@ class OrderCRUD:
             return ordr
         return None
     
-    def delete(self, id: int):
-        ordr = self.read_by_id(id)
+    def delete(self, ord_id: int):
+        ordr = self.read_by_id(ord_id)
         if ordr:
             self.order_list.remove(ordr)
-            return f"Order with ID {id} removed"
+            return f"Order with ID {ord_id} removed"
         return "Order not found"
 
-class DeliveryDriverCRUD:
+class DeliveryDriverCRUD():
+    """CRUD для доставщиков"""
     def __init__(self):
         self.driver_list: DeliveryDriver = []
         self.current_id = 1
@@ -288,7 +301,8 @@ class DeliveryDriverCRUD:
                 return drive
         return None
     
-    def update(self, drive_id: int, name: str = None, phone: int = None, order: Order = None):
+    def update(self, drive_id: int, name: str = None, 
+               phone: int = None, order: Order = None):
         drive = self.read_by_id(drive_id)
         if drive:
             if name is not None:
