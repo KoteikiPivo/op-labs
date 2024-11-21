@@ -42,6 +42,11 @@ class LibrarianCRUD:
             self.librarian_list.remove(lib)
             return f"Librarian with id {lib_id} removed"
         return "Librarian not found"
+    
+    def all_to_json(self):
+        return {
+            'librarian_list': [lib.to_json() for lib in self.librarian_list]
+        }
 
 class MemberCRUD():
     """CRUD для членов библиотеки"""
@@ -80,6 +85,11 @@ class MemberCRUD():
             self.member_list.remove(memb)
             return f"Member with id {memb_id} removed"
         return "Member not found"
+    
+    def all_to_json(self):
+        return {
+            'member_list': [memb.to_json() for memb in self.member_list]
+        }
 
 class AccountCRUD():
     """CRUD для аккаунтов электронной библиотеки"""
@@ -125,6 +135,11 @@ class AccountCRUD():
             return f"Account with id {acc_id} removed"
         return "Account not found"
 
+    def all_to_json(self):
+        return {
+            'account_list': [acc.to_json() for acc in self.account_list]
+        }
+
 class CustomerCRUD():
     """CRUD для клиентов доставки"""
     def __init__(self):
@@ -164,6 +179,11 @@ class CustomerCRUD():
             return f"Customer with address {address_search} removed"
         return "Customer not found"
 
+    def all_to_json(self):
+        return {
+            'customer_list': [cust.to_json() for cust in self.customer_list]
+        }
+
 class BookCRUD():
     """CRUD для книг"""
     def __init__(self):
@@ -201,6 +221,11 @@ class BookCRUD():
             self.book_list.remove(book)
             return f"Book with title {title_search} removed"
         return "Book not found"
+    
+    def all_to_json(self):
+        return {
+            'book_list': [book.to_json() for book in self.book_list]
+        }
 
 class EBookCRUD():
     """CRUD для электронных книг"""
@@ -243,6 +268,11 @@ class EBookCRUD():
             return f"EBook with title {title_search} removed"
         return "EBook not found"
 
+    def all_to_json(self):
+        return {
+            'ebook_list': [ebook.to_json() for ebook in self.ebook_list]
+        }
+
 class OrderCRUD():
     """CRUD для заказов"""
     def __init__(self):
@@ -279,6 +309,11 @@ class OrderCRUD():
             self.order_list.remove(ordr)
             return f"Order with ID {ord_id} removed"
         return "Order not found"
+    
+    def all_to_json(self):
+        return {
+            'order_list': [ordr.to_json() for ordr in self.order_list]
+        }
 
 class DeliveryDriverCRUD():
     """CRUD для доставщиков"""
@@ -320,3 +355,8 @@ class DeliveryDriverCRUD():
             self.driver_list.remove(drive)
             return f"Driver with id {drive_id} removed"
         return "Driver not found"
+    
+    def all_to_json(self):
+        return {
+            'driver_list': [drive.to_json() for drive in self.driver_list]
+        }

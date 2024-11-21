@@ -11,7 +11,6 @@ class Employee(Person):
         self.work_id = work_id
 
 
-
 class Librarian(Employee):
     """Класс библиотекарей"""
     def __init__(self, name: str, phone: int, work_id: int, work_days: str):
@@ -25,7 +24,6 @@ class Librarian(Employee):
             'work_id': self.work_id,
             'work_days': self.work_days
         }
-
 
 
 class Member(Person):
