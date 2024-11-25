@@ -2,23 +2,23 @@
 from classes import *
 
 
-class LibrarianCRUD:
-    """CRUD для библиотекарей"""
+class DoctorCRUD:
+    """CRUD для докторов"""
     def __init__(self):
-        self.librarian_list: Librarian = []
+        self.doctor_list: Doctor = []
         self.current_id = 1
 
-    def create(self, name: str, phone: int, work_days: str) -> Librarian:
-        lib = Librarian(name, phone, self.current_id, work_days)
-        self.librarian_list.append(lib)
+    def create(self, name: str, phone: int, work_days: str) -> Doctor:
+        lib = Doctor(name, phone, self.current_id, work_days)
+        self.doctor_list.append(lib)
         self.current_id += 1
         return lib
     
     def read_all(self):
-        return self.librarian_list
+        return self.doctor_list
     
     def read_by_id(self, lib_id: int):
-        for lib in self.librarian_list:
+        for lib in self.doctor_list:
             if lib.work_id == lib_id:
                 return lib
         return None
@@ -39,60 +39,60 @@ class LibrarianCRUD:
     def delete(self, lib_id: int):
         lib = self.read_by_id(lib_id)
         if lib:
-            self.librarian_list.remove(lib)
-            return f"Librarian with id {lib_id} removed"
-        return "Librarian not found"
+            self.doctor_list.remove(lib)
+            return f"Doctor with id {lib_id} removed"
+        return "Doctor not found"
     
     def all_to_json(self):
         return {
-            'librarian_list': [lib.to_json() for lib in self.librarian_list]
+            'doctor_list': [lib.to_json() for lib in self.doctor_list]
         }
 
-class MemberCRUD():
+class PatientCRUD():
     """CRUD для членов библиотеки"""
     def __init__(self):
-        self.member_list: Member = []
+        self.patient_list: Patient = []
         self.current_id = 1
 
-    def create(self, name: str, phone: int) -> Member:
-        memb = Member(name, phone, self.current_id)
-        self.member_list.append(memb)
+    def create(self, name: str, phone: int) -> Patient:
+        pat = Patient(name, phone, self.current_id)
+        self.patient_list.append(pat)
         self.current_id += 1
-        return memb
+        return pat
     
     def read_all(self):
-        return self.member_list
+        return self.patient_list
     
-    def read_by_id(self, memb_id: int):
-        for memb in self.member_list:
-            if memb.member_id == memb_id:
-                return memb
+    def read_by_id(self, pat_id: int):
+        for pat in self.patient_list:
+            if pat.patient_id == pat_id:
+                return pat
         return None
     
-    def update(self, memb_id: int, name: str, phone: int):
-        memb = self.read_by_id(memb_id)
-        if memb:
+    def update(self, pat_id: int, name: str, phone: int):
+        pat = self.read_by_id(pat_id)
+        if pat:
             if name is not None:
-                memb.name = name
+                pat.name = name
             if phone is not None:
-                memb.phone = phone
-            return memb
+                pat.phone = phone
+            return pat
         return None
     
-    def delete(self, memb_id: int):
-        memb = self.read_by_id(memb_id)
-        if memb:
-            self.member_list.remove(memb)
-            return f"Member with id {memb_id} removed"
-        return "Member not found"
+    def delete(self, pat_id: int):
+        pat = self.read_by_id(pat_id)
+        if pat:
+            self.patient_list.remove(pat)
+            return f"Patient with id {pat_id} removed"
+        return "Patient not found"
     
     def all_to_json(self):
         return {
-            'member_list': [memb.to_json() for memb in self.member_list]
+            'patient_list': [pat.to_json() for pat in self.patient_list]
         }
 
 class AccountCRUD():
-    """CRUD для аккаунтов электронной библиотеки"""
+    """CRUD для аккаунтов сайта больницы"""
     def __init__(self):
         self.account_list: Account = []
         self.current_id = 1
@@ -109,7 +109,7 @@ class AccountCRUD():
     
     def read_by_id(self, acc_id: int):
         for acc in self.account_list:
-            if acc.member_id == acc_id:
+            if acc.patient_id == acc_id:
                 return acc
         return None
     
@@ -140,147 +140,145 @@ class AccountCRUD():
             'account_list': [acc.to_json() for acc in self.account_list]
         }
 
-class CustomerCRUD():
+class AmbulanceCRUD():
     """CRUD для клиентов доставки"""
     def __init__(self):
-        self.customer_list: Customer = []
+        self.ambulance_list: Ambulance = []
 
-    def create(self, name: str, phone: int, address: str) -> Customer:
-        cust = Customer(name, phone, address)
-        self.customer_list.append(cust)
-        return cust
+    def create(self, name: str, phone: int, address: str) -> Ambulance:
+        amb = Ambulance(name, phone, address)
+        self.ambulance_list.append(amb)
+        return amb
     
     def read_all(self):
-        return self.customer_list
+        return self.ambulance_list
     
     def read_by_address(self, address_search: str):
-        for cust in self.customer_list:
-            if cust.address == address_search:
-                return cust
+        for amb in self.ambulance_list:
+            if amb.address == address_search:
+                return amb
         return None
     
     def update(self, address_search: str, name: str, 
                phone: int, address: str):
-        cust = self.read_by_address(address_search)
-        if cust:
+        amb = self.read_by_address(address_search)
+        if amb:
             if name is not None:
-                cust.name = name
+                amb.name = name
             if phone is not None:
-                cust.phone = phone
+                amb.phone = phone
             if address is not None:
-                cust.address = address
-            return cust
+                amb.address = address
+            return amb
         return None
     
     def delete(self, address_search: str):
-        cust = self.read_by_address(address_search)
-        if cust:
-            self.customer_list.remove(cust)
-            return f"Customer with address {address_search} removed"
-        return "Customer not found"
+        amb = self.read_by_address(address_search)
+        if amb:
+            self.ambulance_list.remove(amb)
+            return f"Ambulance with address {address_search} removed"
+        return "Ambulance not found"
 
     def all_to_json(self):
         return {
-            'customer_list': [cust.to_json() for cust in self.customer_list]
+            'ambulance_list': [amb.to_json() for amb in self.ambulance_list]
         }
 
-class BookCRUD():
-    """CRUD для книг"""
+class SymptomCRUD():
+    """CRUD для симптома"""
     def __init__(self):
-        self.book_list: Book = []
+        self.sym_list: Symptom = []
 
-    def create(self, title: str, author: str, year: int) -> Book:
-        book = Book(title, author, year)
-        self.book_list.append(book)
-        return book
+    def create(self, symname: str, severity: int) -> Symptom:
+        symptom = Symptom(symname, severity)
+        self.sym_list.append(symptom)
+        return symptom
     
     def read_all(self):
-        return self.book_list
+        return self.sym_list
     
-    def read_by_title(self, title_search: str):
-        for book in self.book_list:
-            if book.title == title_search:
-                return book
+    def read_by_symname(self, symname_search: str):
+        for symptom in self.sym_list:
+            if symptom.symname == symname_search:
+                return symptom
         return None
     
-    def update(self, title_search: str, title: str, author: str, year: int):
-        book = self.read_by_title(title_search)
-        if book:
-            if title is not None:
-                book.title = title
-            if author is not None:
-                book.author = author
-            if year is not None:
-                book.year = year
-            return book
+    def update(self, symname_search: str, symname: str, severity: int):
+        symptom = self.read_by_symname(symname_search)
+        if symptom:
+            if symname is not None:
+                symptom.symname = symname
+            if severity is not None:
+                symptom.severity = severity
+            return symptom
         return None
     
-    def delete(self, title_search: str):
-        book = self.read_by_title(title_search)
-        if book:
-            self.book_list.remove(book)
-            return f"Book with title {title_search} removed"
-        return "Book not found"
+    def delete(self, symname_search: str):
+        symptom = self.read_by_symname(symname_search)
+        if symptom:
+            self.sym_list.remove(symptom)
+            return f"Symptom with symname {symname_search} removed"
+        return "Symptom not found"
     
     def all_to_json(self):
         return {
-            'book_list': [book.to_json() for book in self.book_list]
+            'sym_list': [symptom.to_json() for symptom in self.sym_list]
         }
 
-class EBookCRUD():
-    """CRUD для электронных книг"""
+class TreatmentCRUD():
+    """CRUD для лечения симптомов"""
     def __init__(self):
-        self.ebook_list: EBook = []
+        self.treat_list: Treatment = []
 
-    def create(self, title: str, author: str, year: int, cost: int) -> EBook:
-        ebook = EBook(title, author, year, cost)
-        self.ebook_list.append(ebook)
-        return ebook
+    def create(self, symname: str, severity: int, treatname: str, cost: int) -> Treatment:
+        treatment = Treatment(symname, severity, treatname, cost)
+        self.treat_list.append(treatment)
+        return treatment
     
     def read_all(self):
-        return self.ebook_list
+        return self.treat_list
     
-    def read_by_title(self, title_search: str):
-        for ebook in self.ebook_list:
-            if ebook.title == title_search:
-                return ebook
+    def read_by_symname(self, symname_search: str):
+        for treatment in self.treat_list:
+            if treatment.symname == symname_search:
+                return treatment
         return None
     
-    def update(self, title_search: str, title: str, 
-               author: str, year: int, cost: int):
-        ebook = self.read_by_title(title_search)
-        if ebook:
-            if title is not None:
-                ebook.title = title
-            if author is not None:
-                ebook.author = author
-            if year is not None:
-                ebook.year = year
+    def update(self, symname_search: str, symname: str,
+               severity: int, treatname:str, cost: int):
+        treatment = self.read_by_symname(symname_search)
+        if treatment:
+            if symname is not None:
+                treatment.symname = symname
+            if severity is not None:
+                treatment.severity = severity
+            if treatname is not None:
+                treatment.treatname = treatname
             if cost is not None:
-                ebook.cost = cost
-            return ebook
+                treatment.cost = cost
+            return treatment
         return None
     
-    def delete(self, title_search: str):
-        ebook = self.read_by_title(title_search)
-        if ebook:
-            self.ebook_list.remove(ebook)
-            return f"EBook with title {title_search} removed"
-        return "EBook not found"
+    def delete(self, symname_search: str):
+        treatment = self.read_by_symname(symname_search)
+        if treatment:
+            self.treat_list.remove(treatment)
+            return f"Treatment with symname {symname_search} removed"
+        return "Treatment not found"
 
     def all_to_json(self):
         return {
-            'ebook_list': [ebook.to_json() for ebook in self.ebook_list]
+            'treat_list': [treatment.to_json() for treatment in self.treat_list]
         }
 
 class OrderCRUD():
-    """CRUD для заказов"""
+    """CRUD для вызовов скорой"""
     def __init__(self):
         self.order_list: Order = []
         self.current_id = 1
 
-    def create(self, book: Book, customer: Customer) -> Order:
-        ordr = Order(book, customer, self.current_id)
+    def create(self, symptom: Symptom, ambulance: Ambulance) -> Order:
+        ordr = Order(symptom, ambulance, self.current_id)
         self.order_list.append(ordr)
         return ordr
     
@@ -293,13 +291,13 @@ class OrderCRUD():
                 return ordr
         return None
     
-    def update(self, ord_id: int, book: Book, customer: Customer):
+    def update(self, ord_id: int, symptom: Symptom, ambulance: Ambulance):
         ordr = self.read_by_id(ord_id)
         if ordr:
-            if book is not None:
-                ordr.book = book
-            if customer is not None:
-                ordr.customer = customer
+            if symptom is not None:
+                ordr.symptom = symptom
+            if ambulance is not None:
+                ordr.ambulance = ambulance
             return ordr
         return None
     
@@ -315,14 +313,14 @@ class OrderCRUD():
             'order_list': [ordr.to_json() for ordr in self.order_list]
         }
 
-class DeliveryDriverCRUD():
-    """CRUD для доставщиков"""
+class AmbulanceDriverCRUD():
+    """CRUD для водителей скорой"""
     def __init__(self):
-        self.driver_list: DeliveryDriver = []
+        self.driver_list: AmbulanceDriver = []
         self.current_id = 1
 
-    def create(self, name: str, phone: int, order: Order) -> DeliveryDriver:
-        drive = DeliveryDriver(name, phone, self.current_id, order)
+    def create(self, name: str, phone: int, order: Order) -> AmbulanceDriver:
+        drive = AmbulanceDriver(name, phone, self.current_id, order)
         self.driver_list.append(drive)
         self.current_id += 1
         return drive

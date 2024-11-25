@@ -11,8 +11,8 @@ class Employee(Person):
         self.work_id = work_id
 
 
-class Librarian(Employee):
-    """Класс библиотекарей"""
+class Doctor(Employee):
+    """Класс докторов"""
     def __init__(self, name: str, phone: int, work_id: int, work_days: str):
         super().__init__(name, phone, work_id)
         self.work_days = work_days
@@ -26,25 +26,25 @@ class Librarian(Employee):
         }
 
 
-class Member(Person):
-    """Классы членов библиотеки"""
-    def __init__(self, name: str, phone: int, member_id: int):
+class Patient(Person):
+    """Классы пациентов"""
+    def __init__(self, name: str, phone: int, patient_id: int):
         super().__init__(name, phone)
-        self.member_id = member_id
+        self.patient_id = patient_id
         
     def to_json(self):
         return {
             'name': self.name,
             'phone': self.phone,
-            'member_id': self.member_id
+            'patient_id': self.patient_id
         }
 
 
-class Account(Member):
-    """Классы аккаунтов электронной библиотеки"""
-    def __init__(self, name: str, phone: int, member_id: int,
+class Account(Patient):
+    """Классы аккаунтов сайта больницы"""
+    def __init__(self, name: str, phone: int, patient_id: int,
                  login: str, passwd: str):
-        super().__init__(name, phone, member_id)
+        super().__init__(name, phone, patient_id)
         self.login = login
         self.passwd = passwd
 
@@ -52,13 +52,13 @@ class Account(Member):
         return {
             'name': self.name,
             'phone': self.phone,
-            'member_id': self.member_id,
+            'patient_id': self.patient_id,
             'login': self.login,
             'passwd': self.passwd
         }
 
-class Customer(Person):
-    """Класс клиента доставки"""
+class Ambulance(Person):
+    """Класс пациента, вызывающего скорую"""
     def __init__(self, name: str, phone: int, address: str):
         super().__init__(name, phone)
         self.address = address
@@ -72,52 +72,51 @@ class Customer(Person):
 
 
 
-class Book:
-    """Классы книг библиотеки"""
-    def __init__(self, title: str, author: str, year: int):
-        self.title = title
-        self.author = author
-        self.year = year
+class Symptom:
+    """Классы симптомов"""
+    def __init__(self, symname: str, severity: int):
+        self.symname = symname
+        self.severity = severity
 
     def to_json(self):
         return {
-            'title': self.title,
-            'author': self.author,
-            'year': self.year
+            'symname': self.symname,
+            'severity': self.severity
         }
 
-class EBook(Book):
-    """Классы электронных книг библиотеки"""
-    def __init__(self, title: str, author: str, year: int, cost: int):
-        super().__init__(title, author, year)
+class Treatment(Symptom):
+    """Классы лечения симптомов"""
+    def __init__(self, symname: str, severity: int, treatname: str, cost: int):
+        super().__init__(symname, severity)
         self.cost = cost
+        self.treatname = treatname
     
     def to_json(self):
         return {
-            'title': self.title,
-            'author': self.author,
-            'year': self.year,
+            'symname': self.symname,
+            'severity': self.severity,
+            'treatname': self.treatname,
             'cost': self.cost
         }
 
 
 
 class Order:
-    """Класс заказов"""
-    def __init__(self, book: Book, customer: Customer, ord_id: int):
-        self.book = book
-        self.customer = customer
+    """Класс вызывов скорой"""
+    def __init__(self, symptom: Symptom, ambulance: Ambulance, ord_id: int):
+        self.symptom = symptom
+        self.ambulance = ambulance
         self.ord_id = ord_id
 
     def to_json(self):
         return {
-            'book': self.book.to_json,
-            'customer': self.customer.to_json,
+            'symptom': self.symptom.to_json,
+            'ambulance': self.ambulance.to_json,
             'ord_id': self.ord_id
         }
 
-class DeliveryDriver(Employee):
-    """Класс доставщиков"""
+class AmbulanceDriver(Employee):
+    """Класс водителей скорой"""
     def __init__(self, name: str, phone: int, work_id: int, order: Order):
         super().__init__(name, phone, work_id)
         self.work_id = work_id
