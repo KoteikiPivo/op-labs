@@ -71,7 +71,6 @@ class Ambulance(Person):
         }
 
 
-
 class Symptom:
     """Классы симптомов"""
     def __init__(self, symname: str, severity: int):
@@ -100,7 +99,6 @@ class Treatment(Symptom):
         }
 
 
-
 class Order:
     """Класс вызывов скорой"""
     def __init__(self, symptom: Symptom, ambulance: Ambulance, ord_id: int):
@@ -110,8 +108,8 @@ class Order:
 
     def to_json(self):
         return {
-            'symptom': self.symptom.to_json,
-            'ambulance': self.ambulance.to_json,
+            'symptom': self.symptom.to_json(),
+            'ambulance': self.ambulance.to_json(),
             'ord_id': self.ord_id
         }
 
@@ -127,5 +125,5 @@ class AmbulanceDriver(Employee):
             'name': self.name,
             'phone': self.phone,
             'work_id': self.work_id,
-            'order': self.order.to_json
+            'order': self.order.to_json()
         }

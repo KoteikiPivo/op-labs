@@ -1,7 +1,6 @@
 # Имплементации CRUD для классов из "classes.py"
 from classes import *
 
-
 class DoctorCRUD:
     """CRUD для докторов"""
     def __init__(self):
@@ -43,7 +42,7 @@ class DoctorCRUD:
             return f"Doctor with id {lib_id} removed"
         return "Doctor not found"
     
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'doctor_list': [lib.to_json() for lib in self.doctor_list]
         }
@@ -86,7 +85,7 @@ class PatientCRUD():
             return f"Patient with id {pat_id} removed"
         return "Patient not found"
     
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'patient_list': [pat.to_json() for pat in self.patient_list]
         }
@@ -135,7 +134,7 @@ class AccountCRUD():
             return f"Account with id {acc_id} removed"
         return "Account not found"
 
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'account_list': [acc.to_json() for acc in self.account_list]
         }
@@ -179,7 +178,7 @@ class AmbulanceCRUD():
             return f"Ambulance with address {address_search} removed"
         return "Ambulance not found"
 
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'ambulance_list': [amb.to_json() for amb in self.ambulance_list]
         }
@@ -197,6 +196,7 @@ class SymptomCRUD():
     def read_all(self):
         return self.sym_list
     
+
     def read_by_symname(self, symname_search: str):
         for symptom in self.sym_list:
             if symptom.symname == symname_search:
@@ -220,7 +220,7 @@ class SymptomCRUD():
             return f"Symptom with symname {symname_search} removed"
         return "Symptom not found"
     
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'sym_list': [symptom.to_json() for symptom in self.sym_list]
         }
@@ -266,7 +266,7 @@ class TreatmentCRUD():
             return f"Treatment with symname {symname_search} removed"
         return "Treatment not found"
 
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'treat_list': [treatment.to_json() for treatment in self.treat_list]
         }
@@ -287,7 +287,7 @@ class OrderCRUD():
     
     def read_by_id(self, ord_id: int):
         for ordr in self.order_list:
-            if ordr.id == ord_id:
+            if ordr.ord_id == ord_id:
                 return ordr
         return None
     
@@ -308,7 +308,7 @@ class OrderCRUD():
             return f"Order with ID {ord_id} removed"
         return "Order not found"
     
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'order_list': [ordr.to_json() for ordr in self.order_list]
         }
@@ -354,7 +354,7 @@ class AmbulanceDriverCRUD():
             return f"Driver with id {drive_id} removed"
         return "Driver not found"
     
-    def all_to_json(self):
+    def class_to_json(self):
         return {
             'driver_list': [drive.to_json() for drive in self.driver_list]
         }
