@@ -1,4 +1,5 @@
 # Имплементации CRUD для классов из "classes.py"
+from xml.etree import ElementTree as ElTree
 from classes import *
 
 class DoctorCRUD:
@@ -50,6 +51,15 @@ class DoctorCRUD:
     def from_json(self, data):
         for doc in data['doctor_list']:
             self.create(doc['name'], doc['phone'], doc['work_days'])
+    
+    def class_to_xml(self, root: ElTree.Element):
+        doctors = ElTree.SubElement(root, 'Doctors')
+        for doc in self.doctor_list:
+            d = ElTree.SubElement(doctors, 'Doctor')
+            d.set('name', doc.name)
+            d.set('phone', str(doc.phone))
+            d.set('work_id', str(doc.work_id))
+            d.set('work_days', doc.work_days)
 
 class PatientCRUD():
     """CRUD для членов библиотеки"""
@@ -97,6 +107,14 @@ class PatientCRUD():
     def from_json(self, data):
         for pat in data['patient_list']:
             self.create(pat['name'], pat['phone'])
+
+    def class_to_xml(self, root: ElTree.Element):
+        patients = ElTree.SubElement(root, 'Patients')
+        for pat in self.patient_list:
+            p = ElTree.SubElement(patients, 'Patient')
+            p.set('name', pat.name)
+            p.set('phone', str(pat.phone))
+            p.set('patient_id', str(pat.patient_id))
 
 class AccountCRUD():
     """CRUD для аккаунтов сайта больницы"""
@@ -150,6 +168,16 @@ class AccountCRUD():
     def from_json(self, data):
         for acc in data['account_list']:
             self.create(acc['name'], acc['phone'], acc['login'], acc['passwd'])
+    
+    def class_to_xml(self, root: ElTree.Element):
+        accounts = ElTree.SubElement(root, 'Accounts')
+        for acc in self.account_list:
+            a = ElTree.SubElement(accounts, 'Account')
+            a.set('name', acc.name)
+            a.set('phone', str(acc.phone))
+            a.set('patient_id', str(acc.patient_id))
+            a.set('login', acc.login)
+            a.set('passwd', acc.passwd)
 
 class AmbulanceCRUD():
     """CRUD для пациентов, вызывающих скорую"""
@@ -199,6 +227,14 @@ class AmbulanceCRUD():
         for amb in data['ambulance_list']:
             self.create(amb['name'], amb['phone'], amb['address'])
 
+    def class_to_xml(self, root: ElTree.Element):
+        ambulances = ElTree.SubElement(root, 'Ambulances')
+        for amb in self.ambulance_list:
+            a = ElTree.SubElement(ambulances, 'Ambulance')
+            a.set('name', amb.name)
+            a.set('phone', str(amb.phone))
+            a.set('address', amb.address)
+
 class SymptomCRUD():
     """CRUD для симптома"""
     def __init__(self):
@@ -244,6 +280,13 @@ class SymptomCRUD():
     def from_json(self, data):
         for sym in data['sym_list']:
             self.create(sym['symname'], sym['severity'])
+    
+    def class_to_xml(self, root: ElTree.Element):
+        symptoms = ElTree.SubElement(root, 'Symptoms')
+        for sym in self.sym_list:
+            s = ElTree.SubElement(symptoms, 'Symptom')
+            s.set('symname', sym.symname)
+            s.set('severity', str(sym.severity))
 
 class TreatmentCRUD():
     """CRUD для лечения симптомов"""
@@ -296,6 +339,15 @@ class TreatmentCRUD():
             self.create(treatment['symname'], treatment['severity'],
                         treatment['treatname'], treatment['cost'])
 
+    def class_to_xml(self, root: ElTree.Element):
+        treatments = ElTree.SubElement(root, 'Treatments')
+        for treatment in self.treat_list:
+            t = ElTree.SubElement(treatments, 'Treatment')
+            t.set('symname', treatment.symname)
+            t.set('severity', str(treatment.severity))
+            t.set('treatname', treatment.treatname)
+            t.set('cost', str(treatment.cost))
+
 class OrderCRUD():
     """CRUD для вызовов скорой"""
     def __init__(self):
@@ -340,7 +392,29 @@ class OrderCRUD():
     
     def from_json(self, data):
         for ordr in data['order_list']:
-            self.create(ordr['symptom'], ordr['ambulance'])
+            sym = ordr['symptom']
+            amb = ordr['ambulance']
+            self.create(Symptom(sym['symname'],
+                                sym['severity']),
+                        Ambulance(amb['name'],
+                                  amb['phone'],
+                                  amb['address']))
+    
+    def class_to_xml(self, root: ElTree.Element):
+        orders = ElTree.SubElement(root, 'Orders')
+        for ordr in self.order_list:
+            o = ElTree.SubElement(orders, 'Order')
+            o.set('ord_id', str(ordr.ord_id))
+
+            sym = ElTree.SubElement(o, 'Symptom')
+            sym.set('symname', ordr.symptom.symname)
+            sym.set('severity', str(ordr.symptom.severity))
+
+            amb = ElTree.SubElement(o, 'Ambulance')
+            amb.set('name', ordr.ambulance.name)
+            amb.set('phone', str(ordr.ambulance.phone))
+            amb.set('address', ordr.ambulance.address)
+
 
 class AmbulanceDriverCRUD():
     """CRUD для водителей скорой"""
@@ -390,4 +464,32 @@ class AmbulanceDriverCRUD():
     
     def from_json(self, data):
         for drive in data['driver_list']:
-            self.create(drive['name'], drive['phone'], drive['order'])
+            sym = drive['order']['symptom']
+            amb = drive['order']['ambulance']
+            self.create(drive['name'], drive['phone'],
+                        Order(Symptom(sym['symname'],
+                                      sym['severity']),
+                              Ambulance(amb['name'],
+                                        amb['phone'],
+                                        amb['address']),
+                              drive['order']['ord_id']))
+
+    def class_to_xml(self, root: ElTree.Element):
+        drivers = ElTree.SubElement(root, 'Drivers')
+        for drive in self.driver_list:
+            d = ElTree.SubElement(drivers, 'Driver')
+            d.set('name', drive.name)
+            d.set('phone', str(drive.phone))
+            d.set('work_id', str(drive.work_id))
+
+            ordr = ElTree.SubElement(d, 'Order')
+            ordr.set('ord_id', str(drive.order.ord_id))
+
+            sym = ElTree.SubElement(ordr, 'Symptom')
+            sym.set('symname', drive.order.symptom.symname)
+            sym.set('severity', str(drive.order.symptom.severity))
+
+            amb = ElTree.SubElement(ordr, 'Ambulance')
+            amb.set('name', drive.order.ambulance.name)
+            amb.set('phone', str(drive.order.ambulance.phone))
+            amb.set('address', drive.order.ambulance.address)

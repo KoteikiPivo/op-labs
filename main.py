@@ -60,9 +60,9 @@ print(hospital.account.read_all())
 
 
 # Сохранение в json
-def save_to_json(hospital):
+def save_to_json(hosp: Hospital):
     try:
-        json_obj = json.dumps(hospital.all_to_json(), indent=4)
+        json_obj = json.dumps(hosp.all_to_json(), indent=4)
     except AttributeError:
         print("Error: Couldn't find a class through the 'read_by' function")
 
@@ -76,18 +76,36 @@ save_to_json(hospital)
 
 # Чтение из json
 hospital2 = Hospital()
-def import_from_json(hospital):
+def import_from_json(hosp: Hospital):
     with open('test_data.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
 
-    hospital.doctor.from_json(data['doctor_crud'])
-    hospital.patient.from_json(data['patient_crud'])
-    hospital.account.from_json(data['account_crud'])
-    hospital.ambulance.from_json(data['ambulance_crud'])
-    hospital.symptom.from_json(data['symptom_crud'])
-    hospital.treatment.from_json(data['treatment_crud'])
-    hospital.order.from_json(data['order_crud'])
-    hospital.driver.from_json(data['driver_crud'])
+    hosp.doctor.from_json(data['doctor_crud'])
+    hosp.patient.from_json(data['patient_crud'])
+    hosp.account.from_json(data['account_crud'])
+    hosp.ambulance.from_json(data['ambulance_crud'])
+    hosp.symptom.from_json(data['symptom_crud'])
+    hosp.treatment.from_json(data['treatment_crud'])
+    hosp.order.from_json(data['order_crud'])
+    hosp.driver.from_json(data['driver_crud'])
 
 import_from_json(hospital2)
-print(hospital2.doctor.read_by_id(3).name)
+print(hospital2.doctor.read_by_id(3).name, '\n')
+print(hospital2.order.read_by_id(1).symptom.symname)
+
+# Сохранение в xml
+def save_to_xml(hosp: Hospital, file_name: str):
+    root = ElTree.Element('Hospital')
+    hosp.doctor.class_to_xml(root)
+    hosp.patient.class_to_xml(root)
+    hosp.account.class_to_xml(root)
+    hosp.ambulance.class_to_xml(root)
+    hosp.symptom.class_to_xml(root)
+    hosp.treatment.class_to_xml(root)
+    hosp.order.class_to_xml(root)
+    hosp.driver.class_to_xml(root)
+
+    tree = ElTree.ElementTree(root)
+    tree.write(file_name)
+
+save_to_xml(hospital2, 'output.xml')
