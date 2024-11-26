@@ -47,6 +47,10 @@ class DoctorCRUD:
             'doctor_list': [lib.to_json() for lib in self.doctor_list]
         }
 
+    def from_json(self, data):
+        for doc in data['doctor_list']:
+            self.create(doc['name'], doc['phone'], doc['work_days'])
+
 class PatientCRUD():
     """CRUD для членов библиотеки"""
     def __init__(self):
@@ -89,6 +93,10 @@ class PatientCRUD():
         return {
             'patient_list': [pat.to_json() for pat in self.patient_list]
         }
+    
+    def from_json(self, data):
+        for pat in data['patient_list']:
+            self.create(pat['name'], pat['phone'])
 
 class AccountCRUD():
     """CRUD для аккаунтов сайта больницы"""
@@ -138,9 +146,13 @@ class AccountCRUD():
         return {
             'account_list': [acc.to_json() for acc in self.account_list]
         }
+    
+    def from_json(self, data):
+        for acc in data['account_list']:
+            self.create(acc['name'], acc['phone'], acc['login'], acc['passwd'])
 
 class AmbulanceCRUD():
-    """CRUD для клиентов доставки"""
+    """CRUD для пациентов, вызывающих скорую"""
     def __init__(self):
         self.ambulance_list: Ambulance = []
 
@@ -182,6 +194,10 @@ class AmbulanceCRUD():
         return {
             'ambulance_list': [amb.to_json() for amb in self.ambulance_list]
         }
+    
+    def from_json(self, data):
+        for amb in data['ambulance_list']:
+            self.create(amb['name'], amb['phone'], amb['address'])
 
 class SymptomCRUD():
     """CRUD для симптома"""
@@ -224,6 +240,10 @@ class SymptomCRUD():
         return {
             'sym_list': [symptom.to_json() for symptom in self.sym_list]
         }
+    
+    def from_json(self, data):
+        for sym in data['sym_list']:
+            self.create(sym['symname'], sym['severity'])
 
 class TreatmentCRUD():
     """CRUD для лечения симптомов"""
@@ -270,6 +290,11 @@ class TreatmentCRUD():
         return {
             'treat_list': [treatment.to_json() for treatment in self.treat_list]
         }
+    
+    def from_json(self, data):
+        for treatment in data['treat_list']:
+            self.create(treatment['symname'], treatment['severity'],
+                        treatment['treatname'], treatment['cost'])
 
 class OrderCRUD():
     """CRUD для вызовов скорой"""
@@ -312,6 +337,10 @@ class OrderCRUD():
         return {
             'order_list': [ordr.to_json() for ordr in self.order_list]
         }
+    
+    def from_json(self, data):
+        for ordr in data['order_list']:
+            self.create(ordr['symptom'], ordr['ambulance'])
 
 class AmbulanceDriverCRUD():
     """CRUD для водителей скорой"""
@@ -358,3 +387,7 @@ class AmbulanceDriverCRUD():
         return {
             'driver_list': [drive.to_json() for drive in self.driver_list]
         }
+    
+    def from_json(self, data):
+        for drive in data['driver_list']:
+            self.create(drive['name'], drive['phone'], drive['order'])

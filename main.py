@@ -1,11 +1,11 @@
-# Вариант 11 - Предметная область поликлиники
+# Вариант 11 - Предметная область поликлиники/больницы
 
 import json
 from classes import *
 from crudclasses import *
 
 class Hospital:
-    """Класс больницы"""
+    """Класс больницы (обобщение всех CRUDов)"""
     def __init__(self):
         self.doctor = DoctorCRUD()
         self.patient = PatientCRUD()
@@ -31,6 +31,7 @@ class Hospital:
 
 
 hospital = Hospital()
+
 # Использование CRUD классов для заполнения данных
 hospital.doctor.create("Doctor 1",21321,"Monday, Friday")
 hospital.doctor.create("Doctor 2",21321,"Tuesday")
@@ -57,14 +58,36 @@ print(hospital.account.read_all())
 hospital.account.delete(1)
 print(hospital.account.read_all())
 
-# Сохранение в json
-try:
-    json_obj = json.dumps(hospital.all_to_json(), indent=4)
-except AttributeError:
-    print("Error: Couldn't find a class through the 'read_by' function")
 
-try:
-    with open("sample.json", "w", encoding="utf-8") as outfile:
-        outfile.write(json_obj)
-except NameError:
-    print("Error: Couldn't export data to json")
+# Сохранение в json
+def save_to_json(hospital):
+    try:
+        json_obj = json.dumps(hospital.all_to_json(), indent=4)
+    except AttributeError:
+        print("Error: Couldn't find a class through the 'read_by' function")
+
+    try:
+        with open("output.json", "w", encoding="utf-8") as outfile:
+            outfile.write(json_obj)
+    except NameError:
+        print("Error: Couldn't export data to json")
+
+save_to_json(hospital)
+
+# Чтение из json
+hospital2 = Hospital()
+def import_from_json(hospital):
+    with open('test_data.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+
+    hospital.doctor.from_json(data['doctor_crud'])
+    hospital.patient.from_json(data['patient_crud'])
+    hospital.account.from_json(data['account_crud'])
+    hospital.ambulance.from_json(data['ambulance_crud'])
+    hospital.symptom.from_json(data['symptom_crud'])
+    hospital.treatment.from_json(data['treatment_crud'])
+    hospital.order.from_json(data['order_crud'])
+    hospital.driver.from_json(data['driver_crud'])
+
+import_from_json(hospital2)
+print(hospital2.doctor.read_by_id(3).name)
