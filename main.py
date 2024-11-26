@@ -67,17 +67,17 @@ def save_to_json(hosp: Hospital):
         print("Error: Couldn't find a class through the 'read_by' function")
 
     try:
-        with open("output.json", "w", encoding="utf-8") as outfile:
+        with open("files/output.json", "w", encoding="utf-8") as outfile:
             outfile.write(json_obj)
     except NameError:
         print("Error: Couldn't export data to json")
 
 save_to_json(hospital)
 
+
 # Чтение из json
-hospital2 = Hospital()
 def import_from_json(hosp: Hospital):
-    with open('test_data.json', 'r', encoding='utf-8') as file:
+    with open('files/test_data.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     hosp.doctor.from_json(data['doctor_crud'])
@@ -89,9 +89,11 @@ def import_from_json(hosp: Hospital):
     hosp.order.from_json(data['order_crud'])
     hosp.driver.from_json(data['driver_crud'])
 
+hospital2 = Hospital()
 import_from_json(hospital2)
-print(hospital2.doctor.read_by_id(3).name, '\n')
-print(hospital2.order.read_by_id(1).symptom.symname)
+print(hospital2.doctor.read_by_id(3).name)
+print(hospital2.order.read_by_id(1).symptom.symname, '\n')
+
 
 # Сохранение в xml
 def save_to_xml(hosp: Hospital, file_name: str):
@@ -108,4 +110,35 @@ def save_to_xml(hosp: Hospital, file_name: str):
     tree = ElTree.ElementTree(root)
     tree.write(file_name)
 
-save_to_xml(hospital2, 'output.xml')
+save_to_xml(hospital2, 'files/output.xml')
+
+
+# Чтение из xml
+def import_from_xml(hosp: Hospital, file_name: str):
+    tree = ElTree.parse(file_name)
+    root = tree.getroot()
+    for doc in root.find('Doctors'):
+        hosp.doctor.create(doc.get('name'), int(doc.get('phone')), 
+                           doc.get('work_days'))
+    for pat in root.find('Patients'):
+        hosp.patient.create(pat.get('name'), int(pat.get('phone')))
+    for acc in root.find('Accounts'):
+        hosp.account.create(acc.get('name'), int(acc.get('phone')),
+                            acc.get('login'), acc.get('passwd'))
+    for amb in root.find('Ambulances'):
+        hosp.ambulance.create(amb.get('name'), int(amb.get('phone')),
+                              amb.get('address'))
+    for sym in root.find('Symptoms'):
+        hosp.symptom.create(sym.get('symname'), int(sym.get('severity')))
+    for treat in root.find('Treatments'):
+        hosp.treatment.create(treat.get('symname'), int(treat.get('severity')),
+                              treat.get('treatmame'), int(treat.get('cost')))
+#    for ordr in root.find('Orders'):
+
+
+
+hospital3 = Hospital()
+import_from_xml(hospital3, 'files/test_data.xml')
+
+for m in hospital3.doctor.read_all():
+    print(m.name)
