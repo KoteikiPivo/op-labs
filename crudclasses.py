@@ -9,50 +9,38 @@ class DoctorCRUD:
         self.current_id = 1
 
     def create(self, name: str, phone: int, work_days: str) -> Doctor:
-        lib = Doctor(name, phone, self.current_id, work_days)
-        self.doctor_list.append(lib)
+        doc = Doctor(name, phone, self.current_id, work_days)
+        self.doctor_list.append(doc)
         self.current_id += 1
-        return lib
+        return doc
     
     def read_all(self):
         return self.doctor_list
     
-    def read_by_id(self, lib_id: int):
-        for lib in self.doctor_list:
-            if lib.work_id == lib_id:
-                return lib
+    def read_by_id(self, doc_id: int):
+        for doc in self.doctor_list:
+            if doc.work_id == doc_id:
+                return doc
         return None
     
-    def update(self, lib_id: int, name: str = None,
+    def update(self, doc_id: int, name: str = None,
                phone: int = None, work_days: str = None):
-        lib = self.read_by_id(lib_id)
-        if lib:
-            if name is not None:
-                lib.name = name
-            else:
-                raise(UpdateError('name'))
-            if phone is not None:
-                lib.phone = phone
-            else:
-                raise(UpdateError('phone'))
-            if work_days is not None:
-                lib.work_days = work_days
-            else:
-                raise(UpdateError('work_days'))
-            return lib
+        if self.current_id >= doc_id:
+            self.doctor_list[doc_id - 1] = Doctor(name, phone,
+                                                  doc_id, work_days)
         else:
-            raise(UpdateError('lib'))
+            raise(UpdateError('doc'))
     
-    def delete(self, lib_id: int):
-        lib = self.read_by_id(lib_id)
-        if lib:
-            self.doctor_list.remove(lib)
-            return f"Doctor with id {lib_id} removed"
+    def delete(self, doc_id: int):
+        doc = self.read_by_id(doc_id)
+        if doc:
+            self.doctor_list.remove(doc)
+            return f"Doctor with id {doc_id} removed"
         return "Doctor not found"
     
     def class_to_json(self):
         return {
-            'doctor_list': [lib.to_json() for lib in self.doctor_list]
+            'doctor_list': [doc.to_json() for doc in self.doctor_list]
         }
 
     def from_json(self, data):
@@ -90,17 +78,8 @@ class PatientCRUD():
         return None
     
     def update(self, pat_id: int, name: str, phone: int):
-        pat = self.read_by_id(pat_id)
-        if pat:
-            if name is not None:
-                pat.name = name
-            else:
-                raise(UpdateError('name'))
-            if phone is not None:
-                pat.phone = phone
-            else:
-                raise(UpdateError('name'))
-            return pat
+        if self.current_id >= pat_id:
+            self.patient_list[pat_id - 1] = Patient(name, phone, pat_id)
         else:
                 raise(UpdateError('pat'))
     
@@ -152,25 +131,9 @@ class AccountCRUD():
     
     def update(self, acc_id: int, name: str, phone: int,
                login: str, passwd: str):
-        acc = self.read_by_id(acc_id)
-        if acc:
-            if name is not None:
-                acc.name = name
-            else:
-                raise(UpdateError('name'))
-            if phone is not None:
-                acc.phone = phone
-            else:
-                raise(UpdateError('phone'))
-            if login is not None:
-                acc.login = login
-            else:
-                raise(UpdateError('login'))
-            if passwd is not None:
-                acc.passwd = passwd
-            else:
-                raise(UpdateError('passwd'))
-            return acc
+        if self.current_id >= acc_id:
+            self.account_list[acc_id - 1] = Account(name, phone, acc_id,
+                                                    login, passwd)
         else:
                 raise(UpdateError('acc'))
     
@@ -411,17 +374,8 @@ class OrderCRUD():
         return None
     
     def update(self, ord_id: int, symptom: Symptom, ambulance: Ambulance):
-        ordr = self.read_by_id(ord_id)
-        if ordr:
-            if symptom is not None:
-                ordr.symptom = symptom
-            else:
-                raise(UpdateError('symptom'))
-            if ambulance is not None:
-                ordr.ambulance = ambulance
-            else:
-                raise(UpdateError('symptom'))
-            return ordr
+        if self.current_id >= ord_id:
+            self.order_list[ord_id - 1] = Order(symptom, ambulance, ord_id)
         else:
                 raise(UpdateError('ordr'))
     
@@ -486,21 +440,9 @@ class AmbulanceDriverCRUD():
     
     def update(self, drive_id: int, name: str = None, 
                phone: int = None, order: Order = None):
-        drive = self.read_by_id(drive_id)
-        if drive:
-            if name is not None:
-                drive.name = name
-            else:
-                raise(UpdateError('name'))
-            if phone is not None:
-                drive.phone = phone
-            else:
-                raise(UpdateError('phone'))
-            if order is not None:
-                drive.order = order
-            else:
-                raise(UpdateError('order'))
-            return drive
+        if self.current_id >= drive_id:
+            self.driver_list[drive_id - 1] = AmbulanceDriver(name, phone,
+                                                            drive_id, order)
         else:
                 raise(UpdateError('drive'))
     
