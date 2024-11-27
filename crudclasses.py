@@ -29,12 +29,19 @@ class DoctorCRUD:
         if lib:
             if name is not None:
                 lib.name = name
+            else:
+                raise(UpdateError('name'))
             if phone is not None:
                 lib.phone = phone
+            else:
+                raise(UpdateError('phone'))
             if work_days is not None:
                 lib.work_days = work_days
+            else:
+                raise(UpdateError('work_days'))
             return lib
-        return None
+        else:
+            raise(UpdateError('lib'))
     
     def delete(self, lib_id: int):
         lib = self.read_by_id(lib_id)
@@ -87,10 +94,15 @@ class PatientCRUD():
         if pat:
             if name is not None:
                 pat.name = name
+            else:
+                raise(UpdateError('name'))
             if phone is not None:
                 pat.phone = phone
+            else:
+                raise(UpdateError('name'))
             return pat
-        return None
+        else:
+                raise(UpdateError('pat'))
     
     def delete(self, pat_id: int):
         pat = self.read_by_id(pat_id)
@@ -144,14 +156,23 @@ class AccountCRUD():
         if acc:
             if name is not None:
                 acc.name = name
+            else:
+                raise(UpdateError('name'))
             if phone is not None:
                 acc.phone = phone
+            else:
+                raise(UpdateError('phone'))
             if login is not None:
                 acc.login = login
+            else:
+                raise(UpdateError('login'))
             if passwd is not None:
                 acc.passwd = passwd
+            else:
+                raise(UpdateError('passwd'))
             return acc
-        return None
+        else:
+                raise(UpdateError('acc'))
     
     def delete(self, acc_id: int):
         acc = self.read_by_id(acc_id)
@@ -204,12 +225,19 @@ class AmbulanceCRUD():
         if amb:
             if name is not None:
                 amb.name = name
+            else:
+                raise(UpdateError('name'))
             if phone is not None:
                 amb.phone = phone
+            else:
+                raise(UpdateError('phone'))
             if address is not None:
                 amb.address = address
+            else:
+                raise(UpdateError('address'))
             return amb
-        return None
+        else:
+                raise(UpdateError('amb'))
     
     def delete(self, address_search: str):
         amb = self.read_by_address(address_search)
@@ -260,10 +288,15 @@ class SymptomCRUD():
         if symptom:
             if symname is not None:
                 symptom.symname = symname
+            else:
+                raise(UpdateError('symname'))
             if severity is not None:
                 symptom.severity = severity
+            else:
+                raise(UpdateError('severity'))
             return symptom
-        return None
+        else:
+                raise(UpdateError('symptom'))
     
     def delete(self, symname_search: str):
         symptom = self.read_by_symname(symname_search)
@@ -313,14 +346,23 @@ class TreatmentCRUD():
         if treatment:
             if symname is not None:
                 treatment.symname = symname
+            else:
+                raise(UpdateError('symname'))
             if severity is not None:
                 treatment.severity = severity
+            else:
+                raise(UpdateError('severity'))
             if treatname is not None:
                 treatment.treatname = treatname
+            else:
+                raise(UpdateError('treatname'))
             if cost is not None:
                 treatment.cost = cost
+            else:
+                raise(UpdateError('cost'))
             return treatment
-        return None
+        else:
+                raise(UpdateError('treatment'))
     
     def delete(self, symname_search: str):
         treatment = self.read_by_symname(symname_search)
@@ -373,10 +415,15 @@ class OrderCRUD():
         if ordr:
             if symptom is not None:
                 ordr.symptom = symptom
+            else:
+                raise(UpdateError('symptom'))
             if ambulance is not None:
                 ordr.ambulance = ambulance
+            else:
+                raise(UpdateError('symptom'))
             return ordr
-        return None
+        else:
+                raise(UpdateError('ordr'))
     
     def delete(self, ord_id: int):
         ordr = self.read_by_id(ord_id)
@@ -443,12 +490,19 @@ class AmbulanceDriverCRUD():
         if drive:
             if name is not None:
                 drive.name = name
+            else:
+                raise(UpdateError('name'))
             if phone is not None:
                 drive.phone = phone
+            else:
+                raise(UpdateError('phone'))
             if order is not None:
                 drive.order = order
+            else:
+                raise(UpdateError('order'))
             return drive
-        return None
+        else:
+                raise(UpdateError('drive'))
     
     def delete(self, drive_id: int):
         drive = self.read_by_id(drive_id)
