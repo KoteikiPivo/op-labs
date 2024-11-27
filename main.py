@@ -4,8 +4,10 @@ import json
 from classes import *
 from crudclasses import *
 
+
 class Hospital:
     """Класс больницы (обобщение всех CRUDов)"""
+
     def __init__(self):
         self.doctor = DoctorCRUD()
         self.patient = PatientCRUD()
@@ -15,7 +17,7 @@ class Hospital:
         self.treatment = TreatmentCRUD()
         self.order = OrderCRUD()
         self.driver = AmbulanceDriverCRUD()
-    
+
     def all_to_json(self):
         return {
             'doctor_crud': self.doctor.class_to_json(),
@@ -29,20 +31,20 @@ class Hospital:
         }
 
 
-
 hospital = Hospital()
 
 # Использование CRUD классов для заполнения данных
-hospital.doctor.create("Doctor 1",21321,"Monday, Friday")
-hospital.doctor.create("Doctor 2",21321,"Tuesday")
+hospital.doctor.create("Doctor 1", 21321, "Monday, Friday")
+hospital.doctor.create("Doctor 2", 21321, "Tuesday")
 hospital.patient.create("Patient", 21312)
 hospital.account.create("acc1", 123, "qwerty", "12345")
 hospital.account.create("acc2", 456, "logggiiiiin", "qwerty12345")
-hospital.ambulance.create("Dying Patient", 88005553535, 
+hospital.ambulance.create("Dying Patient", 88005553535,
                           "Shosse Frezer, 10, Moscow, Russia, 109202")
 hospital.symptom.create("Coronavirus", 10)
 hospital.treatment.create("Cancer", 100, "Gummy bears", 1000)
-hospital.order.create(hospital.symptom.read_by_symname("Coronavirus"), hospital.ambulance.read_by_address("Shosse Frezer, 10, Moscow, Russia, 109202"))
+hospital.order.create(hospital.symptom.read_by_symname(
+    "Coronavirus"), hospital.ambulance.read_by_address("Shosse Frezer, 10, Moscow, Russia, 109202"))
 hospital.driver.create("John Drive", 7777777, hospital.order.read_by_id(1))
 
 # Чтение
@@ -72,6 +74,7 @@ def save_to_json(hosp: Hospital):
     except NameError:
         print("Error: Couldn't export data to json")
 
+
 save_to_json(hospital)
 
 
@@ -88,6 +91,7 @@ def import_from_json(hosp: Hospital):
     hosp.treatment.from_json(data['treatment_crud'])
     hosp.order.from_json(data['order_crud'])
     hosp.driver.from_json(data['driver_crud'])
+
 
 hospital2 = Hospital()
 import_from_json(hospital2)
@@ -110,6 +114,7 @@ def save_to_xml(hosp: Hospital, file_name: str):
     tree = ElTree.ElementTree(root)
     tree.write(file_name)
 
+
 save_to_xml(hospital2, 'files/output.xml')
 
 
@@ -118,7 +123,7 @@ def import_from_xml(hosp: Hospital, file_name: str):
     tree = ElTree.parse(file_name)
     root = tree.getroot()
     for doc in root.find('Doctors'):
-        hosp.doctor.create(doc.get('name'), int(doc.get('phone')), 
+        hosp.doctor.create(doc.get('name'), int(doc.get('phone')),
                            doc.get('work_days'))
     for pat in root.find('Patients'):
         hosp.patient.create(pat.get('name'), int(pat.get('phone')))
@@ -133,8 +138,25 @@ def import_from_xml(hosp: Hospital, file_name: str):
     for treat in root.find('Treatments'):
         hosp.treatment.create(treat.get('symname'), int(treat.get('severity')),
                               treat.get('treatmame'), int(treat.get('cost')))
-#    for ordr in root.find('Orders'):
+    for ordr in root.find('Orders'):
+        sym = ordr.find('Symptom')
+        amb = ordr.find('Ambulance')
+        hosp.order.create(Symptom(sym.get('symname'),
+                                  int(sym.get('severity'))),
+                          Ambulance(amb.get('name'), int(amb.get('phone')),
+                                    amb.get('address')))
 
+    for drive in root.find('Drivers'):
+        ordr = drive.find('Order')
+        sym = ordr.find('Symptom')
+        amb = ordr.find('Ambulance')
+        drive_ordr = Order(Symptom(sym.get('symname'),
+                                  int(sym.get('severity'))),
+                          Ambulance(amb.get('name'), int(amb.get('phone')),
+                                    amb.get('address')),
+                          int(ordr.get('ord_id')))
+        hosp.driver.create(drive.get('name'), int(drive.get('phone')),
+                           drive_ordr)
 
 
 hospital3 = Hospital()
