@@ -1,0 +1,108 @@
+{
+    "doctor_crud": {
+        "doctor_list": [
+            {
+                "name": "Doctor 1",
+                "phone": 21321,
+                "work_id": 1,
+                "work_days": "Monday, Friday"
+            },
+            {
+                "name": "Doctor 2",
+                "phone": 21321,
+                "work_id": 2,
+                "work_days": "Tuesday"
+            },
+            {
+                "name": "Doctor Threeeeee",
+                "phone": 123123123,
+                "work_id": 3,
+                "work_days": "Monday, Tuesday, Wednesday, Thursday, Friday"
+            }
+        ]
+    },
+    "patient_crud": {
+        "patient_list": [
+            {
+                "name": "New Patient Name",
+                "phone": 123456,
+                "patient_id": 1
+            }
+        ]
+    },
+    "account_crud": {
+        "account_list": [
+            {
+                "name": "acc2",
+                "phone": 456,
+                "patient_id": 2,
+                "login": "logggiiiiin",
+                "passwd": "qwerty12345"
+            }
+        ]
+    },
+    "ambulance_crud": {
+        "ambulance_list": [
+            {
+                "name": "Dying Patient",
+                "phone": 88005553535,
+                "address": "Shosse Frezer, 10, Moscow, Russia, 109202"
+            }
+        ]
+    },
+    "symptom_crud": {
+        "sym_list": [
+            {
+                "symname": "Coronavirus",
+                "severity": 10
+            }
+        ]
+    },
+    "treatment_crud": {
+        "treat_list": [
+            {
+                "symname": "Cancer",
+                "severity": 100,
+                "treatname": "Gummy bears",
+                "cost": 1000
+            }
+        ]
+    },
+    "order_crud": {
+        "order_list": [
+            {
+                "symptom": {
+                    "symname": "Coronavirus",
+                    "severity": 10
+                },
+                "ambulance": {
+                    "name": "Dying Patient",
+                    "phone": 88005553535,
+                    "address": "Shosse Frezer, 10, Moscow, Russia, 109202"
+                },
+                "ord_id": 1
+            }
+        ]
+    },
+    "driver_crud": {
+        "driver_list": [
+            {
+                "name": "John Drive",
+                "phone": 7777777,
+                "work_id": 1,
+                "order": {
+                    "symptom": {
+                        "symname": "Coronavirus",
+                        "severity": 10
+                    },
+                    "ambulance": {
+                        "name": "Dying Patient",
+                        "phone": 88005553535,
+                        "address": "Shosse Frezer, 10, Moscow, Russia, 109202"
+                    },
+                    "ord_id": 1
+                }
+            }
+        ]
+    }
+}
