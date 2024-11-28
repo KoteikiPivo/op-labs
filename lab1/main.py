@@ -792,7 +792,7 @@ def main():
 
     # Редактирование
     print('Имя пациента:\n', hospital.patient.read_by_id(1).name)
-    hospital.patient.update(1, "New Patient Name", 123456)
+    hospital.patient.update(5, "New Patient Name", 123456)
     print('Новое имя пациента:\n', hospital.patient.read_by_id(1).name, "\n")
 
     # Удаление
