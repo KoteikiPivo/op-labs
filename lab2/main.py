@@ -22,9 +22,18 @@ def mac_from_link(link: str):
     return mac_return_valid(link_text)
 
 
+def mac_from_input():
+    user_input = input("\nEnter MAC address: ")
+    if len(mac_return_valid(user_input)) == 1:
+        return "MAC address is valid"
+    else:
+        return "MAC address is invalid"
+
+
 def main():
     print(mac_from_file("lab2/test_macs.txt"))
     print(mac_from_link(LINK))
+    print(mac_from_input())
 
 
 if __name__ == "__main__":
