@@ -10,7 +10,7 @@ valid_macs = ['3D:F2:C9:A6:B3:4F',
 
 invalid_macs = ['3D:F2:C9:A6:B3-4F',
                 'AAAAAAAAAAAAAAAAA',
-                '06-00-00-$0-00-^0',
+                '06-00-00-a0-00-b_',
                 '',
                 '123456677788']
 

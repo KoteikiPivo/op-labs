@@ -18,7 +18,7 @@ def mac_from_file(file_name: str):
 
 
 def mac_from_link(link: str):
-    link_text = requests.get(link).text
+    link_text = requests.get(link, timeout=10).text
     return mac_return_valid(link_text)
 
 
