@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -21,8 +22,14 @@ TILE_COLORS = [
     (237, 177, 46)
 ]
 
+FONT_COLORS = [
+    (119, 110, 101),
+    (10, 10, 10)
+]
+
 width = 200
 height = 200
+thickness = int((width + height) * 0.05)
 font = pygame.font.SysFont("consolas", 60, bold=True)
 
 
@@ -37,10 +44,14 @@ class Tile:
 
     def draw_tile(self, surface):
         color = self.get_color()
+        if (self.power < 3):
+            font_color = FONT_COLORS[0]
+        else:
+            font_color = FONT_COLORS[1]
         pygame.draw.rect(
             surface, color,
             (self.row * width, self.col * height, width, height))
-        text = font.render(str(2 ** self.power), 1, (255, 255, 255))
+        text = font.render(str(2 ** self.power), 1, font_color)
         surface.blit(
             text, (
                 self.row * width + (width / 2 - text.get_width() / 2),
@@ -49,8 +60,28 @@ class Tile:
         )
 
 
+def move_tiles(surface, tiles, clock, direction):
+    match direction:
+        case "left":
+            pass
+        case "down":
+            pass
+        case "up":
+            pass
+        case "right":
+            pass
+
+
+def generate_tiles(tiles):
+    first = random.choices(range(0, 3), k=2)
+    tiles[first[0]][first[1]] = (Tile(first[0], first[1], 1))
+    second = random.choices(range(0, 3), k=2)
+    while second == first:
+        second = random.choices(range(0, 3), k=2)
+    tiles[second[0]][second[1]] = (Tile(second[0], second[1], 1))
+
+
 def draw_grid(surface):
-    thickness = int((width + height) * 0.05)
     for i in range(0, 5):
         pygame.draw.line(
             surface, GAME_COLORS[1],
@@ -59,15 +90,16 @@ def draw_grid(surface):
         for j in range(0, 5):
             pygame.draw.line(
                 surface, GAME_COLORS[1],
-                (j * width, 0), (j * width, width * 4), thickness)
+                (j * width, 0), (j * width, height * 4), thickness)
 
 
 def draw_all(surface, tiles):
     surface.fill(GAME_COLORS[0])
 
-    for tile_row in tiles:
-        for tile in tile_row:
-            tile.draw_tile(surface)
+    for tile_rows in tiles:
+        for tile in tile_rows:
+            if tile is not None:
+                tile.draw_tile(surface)
 
     draw_grid(surface)
 
@@ -75,26 +107,48 @@ def draw_all(surface, tiles):
 
 
 def main():
+    global width
+    global height
     main_surface = pygame.display.set_mode(
-        (width * 4, height * 4), pygame.RESIZABLE)
+        (800, 800), pygame.RESIZABLE)
     pygame.display.set_caption('2048')
 
     clock = pygame.time.Clock()
 
-    tiles = [[], [Tile(0, 0, 4), Tile(1, 1, 9), Tile(1, 2, 10)]]
-    print(tiles[1][1])
+    # tiles = [[None] * 4, [None] * 4, [None] * 4, [None] * 4]
+    tiles = [None] * 4
+    for i in range(4):
+        tiles[i] = [None] * 4
+
+    generate_tiles(tiles)
 
     running = True
     while running:
         clock.tick(60)
-
+        window_width = pygame.display.get_window_size()[0]
+        window_height = pygame.display.get_window_size()[1]
+        width = window_width // 4
+        height = window_height // 4
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 break
+            elif event.type == pygame.VIDEORESIZE:
+                window_width = pygame.display.get_window_size()[0]
+                window_height = pygame.display.get_window_size()[1]
+
+                if window_width < 400:
+                    window_width = 400
+                if window_height < 400:
+                    window_height = 400
+                if (window_width, window_height) != event.size:
+                    main_surface = pygame.display.set_mode(
+                        (window_width, window_height), pygame.RESIZABLE)
+
         draw_all(main_surface, tiles)
 
     pygame.quit()
+    print(tiles)
 
 
 if __name__ == "__main__":
