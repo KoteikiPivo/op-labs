@@ -1,5 +1,7 @@
 import pygame
 import random
+import itertools as it
+from tkinter import messagebox
 
 pygame.init()
 
@@ -31,6 +33,14 @@ width = 200
 height = 200
 thickness = int((width + height) * 0.05)
 font = pygame.font.SysFont("consolas", 60, bold=True)
+
+diagonals = []
+for _, coords in it.groupby(
+        sorted(it.product(range(4), repeat=2), key=sum),
+        key=sum):
+    diagonals.append([i for i in [*coords]])
+
+diagonals = diagonals[1::2]
 
 
 class Tile:
@@ -171,11 +181,11 @@ def generate_tile(tiles):
         for j, element in enumerate(inner):
             if tiles[i][j] is None:
                 empty.append([i, j])
-    if empty != []:
-        gen = random.choice(empty)
-        tiles[gen[0]][gen[1]] = Tile(1)
+    if empty == []:
         return True
     else:
+        gen = random.choice(empty)
+        tiles[gen[0]][gen[1]] = Tile(1)
         return False
 
 
@@ -214,10 +224,31 @@ def prevent_small_window(event, surface):
     return surface
 
 
+def check_same(tile1, tile2):
+    print(tile1.power, tile2.power)
+    return tile1.power == tile2.power
+
+
 def game_over_check(tiles):
-    for i in range(4):
-        for j in range(4):
-            pass
+    game_over = True
+    for diag in diagonals:
+        for coord in diag:
+            if coord[0] != 0:
+                game_over = not check_same(
+                    tiles[coord[0]][coord[1]], tiles[coord[0] - 1][coord[1]])
+            if coord[0] != 3 and game_over:
+                game_over = not check_same(
+                    tiles[coord[0]][coord[1]], tiles[coord[0] + 1][coord[1]])
+            if coord[1] != 0 and game_over:
+                game_over = not check_same(
+                    tiles[coord[0]][coord[1]], tiles[coord[0]][coord[1] - 1])
+            if coord[1] != 3 and game_over:
+                game_over = not check_same(
+                    tiles[coord[0]][coord[1]], tiles[coord[0]][coord[1] + 1])
+            print(game_over)
+        if not game_over:
+            break
+    return game_over
 
 
 def main():
@@ -268,12 +299,22 @@ def main():
                     tiles_full = generate_tile(tiles)
 
         if tiles_full is True:
-            game_over_check(tiles)
+            if game_over_check(tiles):
+                replay = messagebox.askyesno(
+                    "You lost!", "Do you wish to play again?")
+                if replay is False:
+                    pygame.quit()
+                else:
+                    tiles = [None] * 4
+                    for i in range(4):
+                        tiles[i] = [None] * 4
+                    tiles_full = False
+                    generate_tile(tiles)
+                    generate_tile(tiles)
 
         draw_all(main_surface, tiles)
 
     pygame.quit()
-    print(tiles)
 
 
 if __name__ == "__main__":
