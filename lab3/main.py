@@ -84,6 +84,7 @@ def merge_tiles(tile1, tile2):
 
 
 def move_tiles(surface, tiles, direction):
+    moved = False
     match direction:
         case "left":
             for i in range(4):
@@ -101,12 +102,14 @@ def move_tiles(surface, tiles, direction):
                             tiles[i][j] = merge_tiles(
                                 tiles[i][j - shift - 1], tiles[i][j])
                             merge = True
+                            moved = True
                             break
                         else:
                             break
                     if merge is False and shift != 0:
                         tiles[i][j - shift] = tiles[i][j]
                         tiles[i][j] = None
+                        moved = True
         case "down":
             for j in range(3, -1, -1):
                 for i in range(3, -1, -1):
@@ -123,12 +126,14 @@ def move_tiles(surface, tiles, direction):
                             tiles[i][j] = merge_tiles(
                                 tiles[i + shift + 1][j], tiles[i][j])
                             merge = True
+                            moved = True
                             break
                         else:
                             break
                     if merge is False and shift != 0:
                         tiles[i + shift][j] = tiles[i][j]
                         tiles[i][j] = None
+                        moved = True
         case "up":
             for j in range(4):
                 for i in range(4):
@@ -145,12 +150,14 @@ def move_tiles(surface, tiles, direction):
                             tiles[i][j] = merge_tiles(
                                 tiles[i - shift - 1][j], tiles[i][j])
                             merge = True
+                            moved = True
                             break
                         else:
                             break
                     if merge is False and shift != 0:
                         tiles[i - shift][j] = tiles[i][j]
                         tiles[i][j] = None
+                        moved = True
         case "right":
             for i in range(3, -1, -1):
                 for j in range(3, -1, -1):
@@ -167,12 +174,15 @@ def move_tiles(surface, tiles, direction):
                             tiles[i][j] = merge_tiles(
                                 tiles[i][j + shift + 1], tiles[i][j])
                             merge = True
+                            moved = True
                             break
                         else:
                             break
                     if merge is False and shift != 0:
                         tiles[i][j + shift] = tiles[i][j]
                         tiles[i][j] = None
+                        moved = True
+    return moved
 
 
 def generate_tile(tiles):
@@ -285,18 +295,18 @@ def main():
                 main_surface = prevent_small_window(event, main_surface)
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    move_tiles(main_surface, tiles, "left")
-                    tiles_full = generate_tile(tiles)
-                elif event.key == pygame.K_DOWN:
-                    move_tiles(main_surface, tiles, "down")
-                    tiles_full = generate_tile(tiles)
-                elif event.key == pygame.K_UP:
-                    move_tiles(main_surface, tiles, "up")
-                    tiles_full = generate_tile(tiles)
-                elif event.key == pygame.K_RIGHT:
-                    move_tiles(main_surface, tiles, "right")
-                    tiles_full = generate_tile(tiles)
+                if event.key in {pygame.K_LEFT, pygame.K_h, pygame.K_a}:
+                    if move_tiles(main_surface, tiles, "left"):
+                        tiles_full = generate_tile(tiles)
+                elif event.key in {pygame.K_DOWN, pygame.K_j, pygame.K_s}:
+                    if move_tiles(main_surface, tiles, "down"):
+                        tiles_full = generate_tile(tiles)
+                elif event.key in {pygame.K_UP, pygame.K_k, pygame.K_w}:
+                    if move_tiles(main_surface, tiles, "up"):
+                        tiles_full = generate_tile(tiles)
+                elif event.key in {pygame.K_RIGHT, pygame.K_l, pygame.K_d}:
+                    if move_tiles(main_surface, tiles, "right"):
+                        tiles_full = generate_tile(tiles)
 
         if tiles_full is True:
             if game_over_check(tiles):
