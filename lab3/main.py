@@ -34,51 +34,149 @@ font = pygame.font.SysFont("consolas", 60, bold=True)
 
 
 class Tile:
-    def __init__(self, row, col, power):
-        self.row = row
-        self.col = col
+    def __init__(self, power):
         self.power = power
 
     def get_color(self):
         return TILE_COLORS[self.power - 1]
 
-    def draw_tile(self, surface):
-        color = self.get_color()
-        if (self.power < 3):
-            font_color = FONT_COLORS[0]
-        else:
-            font_color = FONT_COLORS[1]
-        pygame.draw.rect(
-            surface, color,
-            (self.row * width, self.col * height, width, height))
-        text = font.render(str(2 ** self.power), 1, font_color)
-        surface.blit(
-            text, (
-                self.row * width + (width / 2 - text.get_width() / 2),
-                self.col * height + (height / 2 - text.get_height() / 2),
+
+def draw_tiles(surface, tiles):
+    row = 0
+    for tile_rows in tiles:
+        col = 0
+        for tile in tile_rows:
+            if tile is None:
+                col += 1
+                continue
+            color = tile.get_color()
+            if (tile.power < 3):
+                font_color = FONT_COLORS[0]
+            else:
+                font_color = FONT_COLORS[1]
+            pygame.draw.rect(
+                surface, color,
+                (col * width, row * height, width, height))
+            text = font.render(str(2 ** tile.power), 1, font_color)
+            surface.blit(
+                text, (
+                    col * width + (width / 2 - text.get_width() / 2),
+                    row * height + (height / 2 - text.get_height() / 2),
+                )
             )
-        )
+            col += 1
+        row += 1
 
 
-def move_tiles(surface, tiles, clock, direction):
+def merge_tiles(tile1, tile2):
+    tile1.power += 1
+    return None
+
+
+def move_tiles(surface, tiles, direction):
     match direction:
         case "left":
-            pass
+            for i in range(4):
+                for j in range(4):
+                    if tiles[i][j] is None:
+                        continue
+                    shift = 0
+                    merge = False
+                    while (shift < j):
+                        if tiles[i][j - shift - 1] is None:
+                            shift += 1
+                            continue
+                        elif (tiles[i][j - shift - 1].power
+                              == tiles[i][j].power):
+                            tiles[i][j] = merge_tiles(
+                                tiles[i][j - shift - 1], tiles[i][j])
+                            merge = True
+                            break
+                        else:
+                            break
+                    if merge is False and shift != 0:
+                        tiles[i][j - shift] = tiles[i][j]
+                        tiles[i][j] = None
         case "down":
-            pass
+            for j in range(3, -1, -1):
+                for i in range(3, -1, -1):
+                    if tiles[i][j] is None:
+                        continue
+                    shift = 0
+                    merge = False
+                    while (shift < 3 - i):
+                        if tiles[i + shift + 1][j] is None:
+                            shift += 1
+                            continue
+                        elif (tiles[i + shift + 1][j].power
+                              == tiles[i][j].power):
+                            tiles[i][j] = merge_tiles(
+                                tiles[i + shift + 1][j], tiles[i][j])
+                            merge = True
+                            break
+                        else:
+                            break
+                    if merge is False and shift != 0:
+                        tiles[i + shift][j] = tiles[i][j]
+                        tiles[i][j] = None
         case "up":
-            pass
+            for j in range(4):
+                for i in range(4):
+                    if tiles[i][j] is None:
+                        continue
+                    shift = 0
+                    merge = False
+                    while (shift < i):
+                        if tiles[i - shift - 1][j] is None:
+                            shift += 1
+                            continue
+                        elif (tiles[i - shift - 1][j].power
+                              == tiles[i][j].power):
+                            tiles[i][j] = merge_tiles(
+                                tiles[i - shift - 1][j], tiles[i][j])
+                            merge = True
+                            break
+                        else:
+                            break
+                    if merge is False and shift != 0:
+                        tiles[i - shift][j] = tiles[i][j]
+                        tiles[i][j] = None
         case "right":
-            pass
+            for i in range(3, -1, -1):
+                for j in range(3, -1, -1):
+                    if tiles[i][j] is None:
+                        continue
+                    shift = 0
+                    merge = False
+                    while (shift < 3 - j):
+                        if tiles[i][j + shift + 1] is None:
+                            shift += 1
+                            continue
+                        elif (tiles[i][j + shift + 1].power
+                              == tiles[i][j].power):
+                            tiles[i][j] = merge_tiles(
+                                tiles[i][j + shift + 1], tiles[i][j])
+                            merge = True
+                            break
+                        else:
+                            break
+                    if merge is False and shift != 0:
+                        tiles[i][j + shift] = tiles[i][j]
+                        tiles[i][j] = None
 
 
-def generate_tiles(tiles):
-    first = random.choices(range(0, 3), k=2)
-    tiles[first[0]][first[1]] = (Tile(first[0], first[1], 1))
-    second = random.choices(range(0, 3), k=2)
-    while second == first:
-        second = random.choices(range(0, 3), k=2)
-    tiles[second[0]][second[1]] = (Tile(second[0], second[1], 1))
+def generate_tile(tiles):
+    empty = []
+    for i, inner in enumerate(tiles):
+        for j, element in enumerate(inner):
+            if tiles[i][j] is None:
+                empty.append([i, j])
+    if empty != []:
+        gen = random.choice(empty)
+        tiles[gen[0]][gen[1]] = Tile(1)
+        return True
+    else:
+        return False
 
 
 def draw_grid(surface):
@@ -96,14 +194,30 @@ def draw_grid(surface):
 def draw_all(surface, tiles):
     surface.fill(GAME_COLORS[0])
 
-    for tile_rows in tiles:
-        for tile in tile_rows:
-            if tile is not None:
-                tile.draw_tile(surface)
-
+    draw_tiles(surface, tiles)
     draw_grid(surface)
 
     pygame.display.update()
+
+
+def prevent_small_window(event, surface):
+    window_width = pygame.display.get_window_size()[0]
+    window_height = pygame.display.get_window_size()[1]
+
+    if window_width < 400:
+        window_width = 400
+    if window_height < 400:
+        window_height = 400
+    if (window_width, window_height) != event.size:
+        surface = pygame.display.set_mode(
+            (window_width, window_height), pygame.RESIZABLE)
+    return surface
+
+
+def game_over_check(tiles):
+    for i in range(4):
+        for j in range(4):
+            pass
 
 
 def main():
@@ -120,8 +234,10 @@ def main():
     for i in range(4):
         tiles[i] = [None] * 4
 
-    generate_tiles(tiles)
+    generate_tile(tiles)
+    generate_tile(tiles)
 
+    tiles_full = False
     running = True
     while running:
         clock.tick(60)
@@ -133,17 +249,26 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 break
-            elif event.type == pygame.VIDEORESIZE:
-                window_width = pygame.display.get_window_size()[0]
-                window_height = pygame.display.get_window_size()[1]
 
-                if window_width < 400:
-                    window_width = 400
-                if window_height < 400:
-                    window_height = 400
-                if (window_width, window_height) != event.size:
-                    main_surface = pygame.display.set_mode(
-                        (window_width, window_height), pygame.RESIZABLE)
+            elif event.type == pygame.VIDEORESIZE:
+                main_surface = prevent_small_window(event, main_surface)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    move_tiles(main_surface, tiles, "left")
+                    tiles_full = generate_tile(tiles)
+                elif event.key == pygame.K_DOWN:
+                    move_tiles(main_surface, tiles, "down")
+                    tiles_full = generate_tile(tiles)
+                elif event.key == pygame.K_UP:
+                    move_tiles(main_surface, tiles, "up")
+                    tiles_full = generate_tile(tiles)
+                elif event.key == pygame.K_RIGHT:
+                    move_tiles(main_surface, tiles, "right")
+                    tiles_full = generate_tile(tiles)
+
+        if tiles_full is True:
+            game_over_check(tiles)
 
         draw_all(main_surface, tiles)
 
