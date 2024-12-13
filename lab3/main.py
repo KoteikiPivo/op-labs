@@ -51,33 +51,6 @@ class Tile:
         return TILE_COLORS[self.power - 1]
 
 
-def draw_tiles(surface, tiles):
-    row = 0
-    for tile_rows in tiles:
-        col = 0
-        for tile in tile_rows:
-            if tile is None:
-                col += 1
-                continue
-            color = tile.get_color()
-            if (tile.power < 3):
-                font_color = FONT_COLORS[0]
-            else:
-                font_color = FONT_COLORS[1]
-            pygame.draw.rect(
-                surface, color,
-                (col * width, row * height, width, height))
-            text = font.render(str(2 ** tile.power), 1, font_color)
-            surface.blit(
-                text, (
-                    col * width + (width / 2 - text.get_width() / 2),
-                    row * height + (height / 2 - text.get_height() / 2),
-                )
-            )
-            col += 1
-        row += 1
-
-
 def merge_tiles(tile1, tile2):
     tile1.power += 1
     return None
@@ -191,12 +164,39 @@ def generate_tile(tiles):
         for j, element in enumerate(inner):
             if tiles[i][j] is None:
                 empty.append([i, j])
-    if empty == []:
+    gen = random.choice(empty)
+    tiles[gen[0]][gen[1]] = Tile(1)
+    if len(empty) <= 1:
         return True
     else:
-        gen = random.choice(empty)
-        tiles[gen[0]][gen[1]] = Tile(1)
         return False
+
+
+def draw_tiles(surface, tiles):
+    row = 0
+    for tile_row in tiles:
+        col = 0
+        for tile in tile_row:
+            if tile is None:
+                col += 1
+                continue
+            color = tile.get_color()
+            if (tile.power < 3):
+                font_color = FONT_COLORS[0]
+            else:
+                font_color = FONT_COLORS[1]
+            pygame.draw.rect(
+                surface, color,
+                (col * width, row * height, width, height))
+            text = font.render(str(2 ** tile.power), 1, font_color)
+            surface.blit(
+                text, (
+                    col * width + (width / 2 - text.get_width() / 2),
+                    row * height + (height / 2 - text.get_height() / 2),
+                )
+            )
+            col += 1
+        row += 1
 
 
 def draw_grid(surface):
@@ -235,7 +235,6 @@ def prevent_small_window(event, surface):
 
 
 def check_same(tile1, tile2):
-    print(tile1.power, tile2.power)
     return tile1.power == tile2.power
 
 
@@ -255,10 +254,29 @@ def game_over_check(tiles):
             if coord[1] != 3 and game_over:
                 game_over = not check_same(
                     tiles[coord[0]][coord[1]], tiles[coord[0]][coord[1] + 1])
-            print(game_over)
-        if not game_over:
+            if game_over is False:
+                break
+        if game_over is False:
             break
     return game_over
+
+
+def game_win_check(tiles):
+    for tile_row in tiles:
+        for tile in tile_row:
+            if tile is not None and tile.power == 11:
+                return True
+    return False
+
+
+def restart_game(tiles):
+    tiles = [None] * 4
+    for i in range(4):
+        tiles[i] = [None] * 4
+    generate_tile(tiles)
+    generate_tile(tiles)
+    pygame.event.clear()
+    return tiles
 
 
 def main():
@@ -267,6 +285,8 @@ def main():
     main_surface = pygame.display.set_mode(
         (800, 800), pygame.RESIZABLE)
     pygame.display.set_caption('2048')
+    icon = pygame.image.load('lab3/icon.jpg')
+    pygame.display.set_icon(icon)
 
     clock = pygame.time.Clock()
 
@@ -294,7 +314,7 @@ def main():
             elif event.type == pygame.VIDEORESIZE:
                 main_surface = prevent_small_window(event, main_surface)
 
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key in {pygame.K_LEFT, pygame.K_h, pygame.K_a}:
                     if move_tiles(main_surface, tiles, "left"):
                         tiles_full = generate_tile(tiles)
@@ -307,6 +327,14 @@ def main():
                 elif event.key in {pygame.K_RIGHT, pygame.K_l, pygame.K_d}:
                     if move_tiles(main_surface, tiles, "right"):
                         tiles_full = generate_tile(tiles)
+                elif event.key == pygame.K_r:
+                    replay = messagebox.askyesno(
+                        "Restart game", "Do you wish to restart the game?")
+                    if replay is True:
+                        tiles = restart_game(tiles)
+                        tiles_full = False
+
+        draw_all(main_surface, tiles)
 
         if tiles_full is True:
             if game_over_check(tiles):
@@ -315,14 +343,17 @@ def main():
                 if replay is False:
                     pygame.quit()
                 else:
-                    tiles = [None] * 4
-                    for i in range(4):
-                        tiles[i] = [None] * 4
+                    tiles = restart_game(tiles)
                     tiles_full = False
-                    generate_tile(tiles)
-                    generate_tile(tiles)
 
-        draw_all(main_surface, tiles)
+        if game_win_check(tiles) is True:
+            replay = messagebox.askyesno(
+                "You won!", "Do you wish to play again?")
+            if replay is False:
+                pygame.quit()
+            else:
+                tiles = restart_game(tiles)
+                tiles_full = False
 
     pygame.quit()
 
