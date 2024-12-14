@@ -1,6 +1,6 @@
 import pygame
 import random
-import itertools as it
+from itertools import groupby, product
 from tkinter import messagebox
 
 pygame.init()
@@ -35,8 +35,8 @@ thickness = int((width + height) * 0.05)
 font = pygame.font.SysFont("consolas", 60, bold=True)
 
 diagonals = []
-for _, coords in it.groupby(
-        sorted(it.product(range(4), repeat=2), key=sum),
+for _, coords in groupby(
+        sorted(product(range(4), repeat=2), key=sum),
         key=sum):
     diagonals.append([i for i in [*coords]])
 
@@ -289,6 +289,14 @@ def main():
     pygame.display.set_icon(icon)
 
     clock = pygame.time.Clock()
+
+    # Lose
+    # tiles = [[Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(8), Tile(9)],
+    #         [Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(1), Tile(1)]]
+    
+    # Win
+    # tiles = [[Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(10), Tile(10)],
+    #         [Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(1), Tile(1)]]
 
     # tiles = [[None] * 4, [None] * 4, [None] * 4, [None] * 4]
     tiles = [None] * 4
