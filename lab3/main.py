@@ -293,7 +293,7 @@ def main():
     # Lose
     # tiles = [[Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(8), Tile(9)],
     #         [Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(1), Tile(1)]]
-    
+
     # Win
     # tiles = [[Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(10), Tile(10)],
     #         [Tile(1), Tile(2), Tile(3), Tile(4)], [Tile(5), Tile(6), Tile(1), Tile(1)]]
@@ -368,3 +368,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
