@@ -92,7 +92,7 @@ def check_currency(message):
 
 
 def check_input_first(message):
-    values["first"] = message.text
+    values["first"] = message.text.lower()
     if get_all_rates(values["first"]) is not None:
         bot.send_message(message.chat.id, responses["checkrate2"])
         bot.register_next_step_handler(message, check_input_second)
@@ -101,7 +101,7 @@ def check_input_first(message):
 
 
 def check_input_second(message):
-    values["second"] = message.text
+    values["second"] = message.text.lower()
     rate = get_rate(values["first"], values["second"])
     if rate is not None:
         bot.reply_to(message, responses["checkrate3"] %
@@ -118,7 +118,7 @@ def convert_currency(message):
 
 
 def convert_input_first(message):
-    values["first"] = message.text
+    values["first"] = message.text.lower()
     if get_all_rates(values["first"]) is not None:
         bot.send_message(message.chat.id, responses["convert2"])
         bot.register_next_step_handler(message, convert_input_second)
@@ -127,7 +127,7 @@ def convert_input_first(message):
 
 
 def convert_input_second(message):
-    values["second"] = message.text
+    values["second"] = message.text.lower()
     rate = get_rate(values["first"], values["second"])
     if rate is not None:
         values["p_rates"] = rate
@@ -184,7 +184,7 @@ def check_all(message):
 
 
 def check_input_all(message):
-    values["first"] = message.text
+    values["first"] = message.text.lower()
     values["page"] = 0
     values["p_rates_list"] = [(x, y) for x, y
                               in get_all_rates(values["first"]).items()]
